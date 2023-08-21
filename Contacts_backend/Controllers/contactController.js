@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 
 const ContactsModal = require("../modals/conatcsModal");
 
+//GET Request : All Contacts
 const getAllContacts = async (req, res) => {
   const contacts = await ContactsModal.find();
   res.status(200).json({ message: "Contacts Data", contacts });
 };
 
+//GET Request: Specific User by Id
 const getContactById = async (req, res) => {
   try {
     const contactById = await ContactsModal.findById(req.params.id);
@@ -21,6 +23,7 @@ const getContactById = async (req, res) => {
   }
 };
 
+//POST Request:Post data
 const postContacts = async (req, res) => {
   try {
     const { name, email, address, phone } = req.body;
@@ -42,6 +45,7 @@ const postContacts = async (req, res) => {
   }
 };
 
+//Update Request
 const updateContacts = async (req, res) => {
   const checkContacts = await ContactsModal.findById(req.params.id);
   console.log(checkContacts);
@@ -71,24 +75,27 @@ const updateContacts = async (req, res) => {
   }
 };
 
-const deleteContacts=async(req,res)=>{
-    try {
-
-        const checkContacts = await ContactsModal.findById(req.params.id);
-        if(checkContacts)
-        {
-            const deleteContact=await ContactsModal.deleteOne({_id:req.params.id})
-            res.status(200).json({message:'Contact is successfully deleted',deleteContact})
-        }
-    } catch (error) {
-        res.status(500).json({ message: "Internel server error", error });
+//Delete Request
+const deleteContacts = async (req, res) => {
+  try {
+    const checkContacts = await ContactsModal.findById(req.params.id);
+    if (checkContacts) {
+      const deleteContact = await ContactsModal.deleteOne({
+        _id: req.params.id,
+      });
+      res
+        .status(200)
+        .json({ message: "Contact is successfully deleted", deleteContact });
     }
-}
+  } catch (error) {
+    res.status(500).json({ message: "Internel server error", error });
+  }
+};
 
 module.exports = {
   getAllContacts,
   postContacts,
   getContactById,
   updateContacts,
-  deleteContacts
+  deleteContacts,
 };
