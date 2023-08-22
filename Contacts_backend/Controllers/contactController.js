@@ -1,7 +1,4 @@
-const express = require("express");
-const mongoose = require("mongoose");
-
-const ContactsModal = require("../modals/conatcsModal");
+const ContactsModal = require("../modals/conatctsModal");
 
 //GET Request : All Contacts
 const getAllContacts = async (req, res) => {
@@ -35,6 +32,7 @@ const postContacts = async (req, res) => {
         email,
         address,
         phone,
+        user_id: req.user.id,
       });
       if (createContacts) {
         res.status(200).json({ message: "Contact is successfully created" });
@@ -54,6 +52,13 @@ const updateContacts = async (req, res) => {
       const { name, email, address, phone } = req.body;
       if (!name || !email || !address || !phone) {
         return res.send(400).json({ message: "Please provide all data" });
+      } else if (checkContacts.user_id.toString() !== req.user.id) {
+        return res
+          .status(403)
+          .json({
+            success: false,
+            message: "Don't have access to update the Contact Data",
+          });
       } else {
         const updateContactData = await ContactsModal.findByIdAndUpdate(
           req.params.id,
@@ -79,7 +84,26 @@ const updateContacts = async (req, res) => {
 const deleteContacts = async (req, res) => {
   try {
     const checkContacts = await ContactsModal.findById(req.params.id);
-    if (checkContacts) {
+    console.log(checkContacts,'CheckContactsaa');
+    console.log(req.user.id,'reuserId');
+    if(!checkContacts)
+    {
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Contact not found",
+        });
+    }
+    else if (checkContacts.user_id.toString() !== req.user.id) {
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Don't have access to delete the Contact Data",
+        });
+      }
+    else {
       const deleteContact = await ContactsModal.deleteOne({
         _id: req.params.id,
       });
