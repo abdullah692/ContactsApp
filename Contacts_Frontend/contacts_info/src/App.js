@@ -1,23 +1,42 @@
-import logo from './logo.svg';
 import './App.css';
-
+import Login from './Components/Login';
+import { Route,Routes } from 'react-router-dom';
+import SignUp from './Components/SignUp';
+import Contacts from './Components/Contacts';
+import { useSelector } from 'react-redux';
+import { ProtectedRoute } from './utils/ProtectedRoute';
+import Check from './Components/Check';
 function App() {
+  const userdata=useSelector((state)=>state?.auth);
+  console.log(userdata,'=>state;');
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route exact path='/'  element={<Login/>}/>
+        <Route  path='/Signup'  element={<SignUp/>}/>
+
+          <Route
+            exact
+            path='/Contact'
+            element={
+              <ProtectedRoute user={userdata}>
+                <Contacts />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* <Route
+            exact
+            path='/Check'
+            element={
+              <ProtectedRoute user={userdata}>
+                <Check />
+              </ProtectedRoute>
+            }
+          /> */}
+      </Routes>
+      
     </div>
   );
 }
