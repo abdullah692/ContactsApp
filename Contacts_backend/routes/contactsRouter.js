@@ -11,8 +11,8 @@ const validateToken=require('../middleware/validateToken')
 
 
 router.use(validateToken)
-router.route('/').get(getAllContacts).post(postContacts);
-router.route('/:id').get(getContactById).put(updateContacts).delete(deleteContacts)
+router.route('/contacts').get(getAllContacts).post(postContacts);
+router.route('/contacts/:id').get(validateToken,getContactById).put(updateContacts).delete(deleteContacts)
 
 module.exports=router;
 

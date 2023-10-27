@@ -16,7 +16,7 @@ const registerUser = async (req, res) => {
     } else {
       const isExists = await UserModal.findOne({ email });
       if (isExists) {
-        return res.status(400).json({ message: "User is already exists" });
+        return res.status(201).json({ message: "User is already exists" });
       }
       const bycryptPass = await bycrypt.hash(password, 10);
       const createUser = await UserModal.create({
@@ -40,6 +40,7 @@ const registerUser = async (req, res) => {
 const postLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
+    
     if (!email || !password) {
       res.status(400).json({ message: "Please provide all data" });
     } else {
@@ -57,7 +58,7 @@ const postLogin = async (req, res) => {
             },
           },
           process.env.ACCESS_TOKEN,
-          { expiresIn: "50m" }
+          { expiresIn: "24hr" }
         );
         console.log(accessToken);
         if (accessToken) {
@@ -65,11 +66,11 @@ const postLogin = async (req, res) => {
             success: true,
             message: "Logged In Successfully",
             accessToken,
+            user:isUserExists.username
           });
         }
       } else {
         res
-          .status(400)
           .json({ success: false, message: "Crendentials are not valid" });
       }
     }
@@ -77,7 +78,7 @@ const postLogin = async (req, res) => {
     return res.status(500).json({ message: "Internel Server Error", error });
   }
 };
-
+ 
 const currentUser = async (req, res) => {
     res.status(200).json({ message: "Current user is available" });
   };
